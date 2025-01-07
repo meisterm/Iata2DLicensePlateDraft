@@ -36,7 +36,7 @@ Baggage is currently identified using a 10-digit License Plate Number. This numb
 ## General specifications
 
 * The used 2D Barcode is the widely known and used "quick-response code" (QR Code) as defined in [ISO/IEC 18004 in the latest version of 2024](https://www.iso.org/standard/83389.html) This code is free to use without any license issues.
-* A new global unique identifier is introduced to replace the license plate number in future. A UUID as defined in [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122) is used. ([See discussion](#discussions))
+* A new global unique identifier is introduced to replace the license plate number in future. A UUID as defined in [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122) is used. The usage of UUID to identify a bag is also recommended by RP 1755. ([See discussion](#discussions))
 * The QR code is printed on both "sides" of a bag tag. It should be placed on the bag tag in combination with the previous IL2of5 barcode to maintain downward compatibility
 
 ### Transition time
@@ -77,26 +77,29 @@ title 2D Bag Tag Code (Flight Leg)
 
 ### Description Table
 
-#### Overall
+#### Header
 
 | Fieldname | M/C/O | Bit length | Codeset | (Example) Value | Description |
 | --------- | ----- | ---------- | ----- | -- | ----------- |
 | Version   | M     | 3    | Numeric (0-7)      | 0x1  | The Version of the Code-Specification which is currently 1 |
 | UUID presence | M | 1 | Boolean | 0x1 | Set to 1 if UUID is present, otherwise 0 |
 | LPN Number presence | M | 1 | Boolean | 0x1 | Set to 1 if LPN Number is present, should be mandatory in version 1 for downward capability  |
+| Number of Flight Legs | M | 3 | Numeric + 1 (1-8) | 1 | The number of flight legs encoded after the Header. The minimum number of flight Legs is 1 (0x0) the maximum is 8 (0x7)  |
 | LPN Number | C | 40 | 10x Numeric Characters | 0220123456 | The License Plate Number encoded in 10 Half-Bytes, only present if "LPN Number presence" is set to 1 |
 | UUID | C | 128 | UUID | 676a1ff6-3750-4399-b427-a1d74e07f6c9 | The UUID as defined in [General specifications](#General specifications), only present if "UUID presence" is set to 1 |
 
+#### Flight Leg
+
 | Fieldname | M/C/O | Bit length | Codeset | (Example) Value | Description |
 | --------- | ----- | ---------- | ----- | -- | ----------- |
-| Designator | M | 10 | 2x [Alpha-Characters](#Alpha-Characters--5-Bits) | "LH" | First two Alpha-Characters of Designator |
-| Designator | M | 6 | 1x Alpha-Numeric-Character | "LH" | Third Alpha-Numeric-Character of Designator |
+| Designator | M | 10 | 2x [Alpha-Characters](#alpha-characters-5-bits) | "LH" | First two Alpha-Characters of Designator |
+| Designator | M | 6 | 1x [Alpha-Numeric-Character](#alpha-numeric-characters-6-bits) | "LH" | Third Alpha-Numeric-Character of Designator |
 | Flight Number | M | 14 | Numeric (0-16383) | 500 | Flightnumber (0-9999) |
 | Year of flight | M | 14 | Numeric (0-16383) | 2025 | Year of Flight |
 | Month of flight | M | 4 | Numeric (0-15) | 7 | Month of Flight |
 | Day of flight | M | 5 | Numeric + 1 (0-30) | 2025 | Day of Flight (1-31) |
-| Departure Airport | M | 15 | 3x [Alpha-Characters](#Alpha-Characters--5-Bits) | "FRA" | IATA 3-Letter Code of Departure Airport |
-| Arrival Airport | M | 15 | 3x [Alpha-Characters](#Alpha-Characters--5-Bits) | "MUC" | IATA 3-Letter Code of Departure Airport |
+| Departure Airport | M | 15 | 3x [Alpha-Characters](#alpha-characters-5-bits) | "FRA" | IATA 3-Letter Code of Departure Airport |
+| Arrival Airport | M | 15 | 3x [Alpha-Characters](#alpha-characters-5-bits) | "MUC" | IATA 3-Letter Code of Departure Airport |
 
 ### JSON representation
 
@@ -189,7 +192,16 @@ The ECC level should be the highest possible. But tests must show which ECC leve
 
 The final QR Code Version for the specification have to be shown by tests.
 
-The minimum required Bit Size to encode 3 Legs wihtout any custom data is 417 bit plus the header size of 33 Bits = 450 Bits (56 Bytes)
+The minimum required Bit Size to encode 3 Legs without any custom data is 417 bit plus the header size of 33 Bits = 450 Bits (56 Bytes). This could be covered by Version 5 with ECC Level Q. For let some space for more Data Version 6 with ECC Level Q would be an alternative with 608 bits.
+The maximum Bit Size of a 2D Bag Tag Code would be 857 bits + 33 bits header = 890 bits to encode 8 flight legs.
+
+## General encoding discussion
+
+The coding is optimized for a minimum size. However, this makes encoding and decoding significantly more complex than if a simpler method were used. Despite this, it is possible to implement the coding in all common programming languages.
+
+Alternatively, one could consider a simpler encoding, but then one would have to accept a higher QR code level with a correspondingly less readable QR code.
+
+The development of open source libraries for free use should be considered.
 
 # Appendix
 
