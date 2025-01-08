@@ -64,14 +64,19 @@ title 2D Bag Tag Code (Header)
 ```mermaid
 packet-beta
 title 2D Bag Tag Code (Flight Leg)
-0-9: "Designator"
-10-15: "Designator Suffix"
-16-30: "Flight Number"
-31-40: "Year of Flight"
-41-45: "Month of Flight"
-46-50: "Day of Flight"
-51-66: "Departure Airport"
-67-82: "Arrival Airport"
+0-4: "Designator 1"
+5-9: "Designator 2"
+10-14: "Designator 3"
+15-29: "Flight Number"
+30-43: "Year of Flight"
+44-47: "Month of Flight"
+48-52: "Day of Flight"
+53-57: "Departure Airport 1"
+58-62: "Departure Airport 2"
+63-67: "Departure Airport 3"
+68-72: "Arrival Airport 1"
+73-77: "Arrival Airport 2"
+78-82: "Arrival Airport 3"
 83-87: "Reserve"
 ```
 
@@ -81,9 +86,9 @@ title 2D Bag Tag Code (Flight Leg)
 
 | Fieldname | M/C/O | Bit length | Codeset | (Example) Value | Description |
 | --------- | ----- | ---------- | ----- | -- | ----------- |
-| Version   | M     | 3    | Numeric (0-7)      | 0x1  | The Version of the Code-Specification which is currently 1 |
-| UUID presence | M | 1 | Boolean | 0x1 | Set to 1 if UUID is present, otherwise 0 |
-| LPN Number presence | M | 1 | Boolean | 0x1 | Set to 1 if LPN Number is present, should be mandatory in version 1 for downward capability  |
+| Version   | M     | 3    | Numeric (0-7)      | 0x0  | The Version of the Code-Specification which is currently 0 |
+| LPN Number presence (P1) | M | 1 | Boolean | 0x1 | Set to 1 if LPN Number is present, should be mandatory in version 1 for downward capability  |
+| UUID presence (P2) | M | 1 | Boolean | 0x1 | Set to 1 if UUID is present, otherwise 0 |
 | Number of Flight Legs | M | 3 | Numeric + 1 (1-8) | 1 | The number of flight legs encoded after the Header. The minimum number of flight Legs is 1 (0x0) the maximum is 8 (0x7)  |
 | LPN Number | C | 40 | 10x Numeric Characters | 0220123456 | The License Plate Number encoded in 10 Half-Bytes, only present if "LPN Number presence" is set to 1 |
 | UUID | C | 128 | UUID | 676a1ff6-3750-4399-b427-a1d74e07f6c9 | The UUID as defined in [General specifications](#General specifications), only present if "UUID presence" is set to 1 |
@@ -197,11 +202,15 @@ The maximum Bit Size of a 2D Bag Tag Code would be 857 bits + 33 bits header = 8
 
 ## General encoding discussion
 
-The coding is optimized for a minimum size. However, this makes encoding and decoding significantly more complex than if a simpler method were used. Despite this, it is possible to implement the coding in all common programming languages.
+The coding is optimized for a minimum size. Therefore the bytes are not aligned. However, this makes encoding and decoding significantly more complex than if a simpler method were used. Despite this, it is possible to implement the coding in all common programming languages.
 
 Alternatively, one could consider a simpler encoding, but then one would have to accept a higher QR code level with a correspondingly less readable QR code.
 
 The development of open source libraries for free use should be considered.
+
+## Bit Encoding - Possible optimization
+
+* Full Year of flight is encoded in 14 bit. When using an offset like year 2000 and to cover the next 255 years with this specification, we could reduce the number of bits for the year to 8.
 
 # Appendix
 
@@ -238,17 +247,18 @@ The development of open source libraries for free use should be considered.
 | 23 | W |
 | 24 | X |
 | 25 | Y |
-| 26 | 0 |
-| 27 | 1 |
-| 28 | 2 |
-| 29 | 3 |
-| 30 | 4 |
-| 31 | 5 |
-| 32 | 6 |
-| 33 | 7 |
-| 34 | 8 |
-| 35 | 9 |
-| 36-63 | Reserved |
+| 26 | Z |
+| 27 | 0 |
+| 28 | 1 |
+| 29 | 2 |
+| 30 | 3 |
+| 31 | 4 |
+| 32 | 5 |
+| 33 | 6 |
+| 34 | 7 |
+| 35 | 8 |
+| 36 | 9 |
+| 37-63 | Reserved |
 
 #### Alpha-Characters (5 Bits)
 
@@ -280,4 +290,5 @@ The development of open source libraries for free use should be considered.
 | 23 | W |
 | 24 | X |
 | 25 | Y |
-| 26-31 | Reserved |
+| 26 | Z |
+| 27-31 | Reserved |
