@@ -8,13 +8,23 @@ export class BagTagEncoder {
 
 
     public encodeInBytes(data: BagTagModel): Uint8Array {
-        let dataBytes = new Uint8Array(600);
+        
         let currentByteIndex = 0;
 
         /* First Byte - Version, P1, P2 and flight Legs */
         const numberOfFlightLegs = data.flights.length;
         const p1 = (data.lpn == null) ? 0 : 1;
         const p2 = (data.uuid == null) ? 0 : 1;
+
+        let dataLength = 1;
+
+        if(data.lpn != null) dataLength += 5;  /* Gepäck ID */
+        
+        if(data.uuid != null) dataLength += 16; /* UUID */
+
+        dataLength += 11 * data.flights.length; /* Flight segments */
+
+        let dataBytes = new Uint8Array(dataLength);
 
         dataBytes[currentByteIndex++] = data.version << 5 | p1 << 4 | p2 << 3 | ((numberOfFlightLegs - 1) & 0x7);
 
@@ -40,10 +50,13 @@ export class BagTagEncoder {
                 throw new RangeError('Given UUID length (' + uuidByteBuffer.byteLength + ') does not equals 32 Bytes!');
             }
 
+            console.log(currentByteIndex);
             for(let index = 0; index < uuidByteBuffer.byteLength; index++) {
                 dataBytes[currentByteIndex + index] = uuidByteBuffer[index];
             }            
             currentByteIndex += uuidByteBuffer.byteLength;
+            
+            console.log(currentByteIndex);
         }
 
         /* Encode flights */
@@ -89,13 +102,14 @@ export class BagTagEncoder {
             dataBytes[currentByteIndex + 8] = ((departureAirport3Encoded << 4) & 0xF0) | ((arrivalAirport1Encoded >> 1) & 0xF);
             dataBytes[currentByteIndex + 9] = ((arrivalAirport1Encoded << 7) & 0x80) | (arrivalAirport2Encoded << 2) & 0x7C | (arrivalAirport3Encoded >> 3) & 0x03;
             dataBytes[currentByteIndex + 10] = ((arrivalAirport3Encoded << 5) & 0xE0); /* 5 Bit Reserve */
+            currentByteIndex += 11;
         }
 
         return dataBytes;
     }
 
     public encodeQrCode(data : Uint8Array) : string {
-        return base45.encode(data);
+        return 'IATALP' + base45.encode(data);
     }
 
     public decode(data: string): BagTagModel {

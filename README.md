@@ -142,8 +142,12 @@ The above description is the format definition for the encoded data in the QR co
 The above JSON example is encoded in binary format following the data definition as following
 
 ```
-00 AA 00 AB C1
-TODO
+39 02 20 12   34 56 67 6A   
+1F F6 37 50   43 99 B4 27   
+A1 D7 4E 07   F6 C9 62 00   
+07 D0 7E 93   09 81 16 D4   
+60 62 00 09   60 7E 93 13   
+41 38 35 20   
 ```
 
 ### QR Code String representation
@@ -155,7 +159,7 @@ The encoded Data is represented as Text and is prefixed with `IATALP` to make it
 The above binary data example is encoded as following:
 
 ```
-IATALP123543654576
+IATALPE97K24XR6E3D$14U:6PO8*YMVKK+%9.8VNHCK:030G391**2E8C900.8CVQI1B8AW6
 ```
 
 ### QR Code Image Generation
@@ -182,6 +186,10 @@ A suitable size for the Bag Tag is between 30 and 40 modules. Therefore, version
 There is an error correction level available for QR codes which allowes parts to be covered or damaged. To ensure that the QR code can always be read reliably, we do not recommend using an ECC level lower than M. A specification for the ECC level cannot yet be made. ([see discussion](#ECC-level)) 
 
 A specification for the QR Code Version cannot yet be made. ([see discussion](#QR-Code-Version)) 
+
+#### Example QR Code
+
+![Example QR Code Image for 2D barcoded Bag Tag](demo_qr.png)
 
 # Discussions
 

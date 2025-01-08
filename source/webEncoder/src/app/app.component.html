@@ -1,14 +1,19 @@
 
 
+<h1>JSON Object</h1>
 <div>
-  <textarea [value]="jsonObjectString" rows="20" cols="100"></textarea>
+  <textarea [value]="jsonObjectString" rows="25" cols="100" (blur)="encodeObject()"></textarea>
 </div>
 
+<h1>Binary Representation</h1>
+<pre>{{hexString}}</pre>
+
+<h1>QR Code String (Base45)</h1>
 <div>
-  <input type="button" (click)="encodeObject()" value="Convert">
+  <textarea [value]="qrString" rows="8" cols="100" (blur)="decodeQrCode()"></textarea>
 </div>
 
-<div>
-  {{qrString}}
-</div>
-
+<h1>QR Code</h1>
+<qr-code [value]="qrString" 
+         size="300" 
+         errorCorrectionLevel="Q" />
