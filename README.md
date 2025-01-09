@@ -305,4 +305,4 @@ The development of open source libraries for free use should be considered.
 
 # License
 
-This specification draft was created by Holger Martiker (Fraport AG) and was published under Creative Commons Attribution 4.0 for public review and discussion. 
+This specification draft was created by Holger Martiker (Fraport AG) and was published under GNU General Public License v3.0 for public review and discussion. 
