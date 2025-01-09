@@ -302,3 +302,7 @@ The development of open source libraries for free use should be considered.
 | 25 | Y |
 | 26 | Z |
 | 27-31 | Reserved |
+
+# License
+
+This specification draft was created by Holger Martiker (Fraport AG) and was published under Creative Commons Attribution 4.0 for public review and discussion. 
